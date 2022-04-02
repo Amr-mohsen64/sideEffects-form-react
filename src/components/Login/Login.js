@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer, useContext } from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
+import AuthContext from '../../store/auth-context';
 
 function emailReducer(state, action) {
   // takes old state and action to update it and return a new state 
@@ -18,8 +19,8 @@ function emailReducer(state, action) {
 
 function passwordReducer(state, action) {
   if (action.type === "USER_INPUT") {
-    console.log(state);
-    console.log(action);
+    // console.log(state);
+    // console.log(action);
     return { value: action.val, isValid: action.val.trim().length > 6 }
   }
 
@@ -33,9 +34,11 @@ const Login = (props) => {
   // const [enteredEmail, setEnteredEmail] = useState('');
   // const [emailIsValid, setEmailIsValid] = useState();
   // const [enteredPassword, setEnteredPassword] = useState('');
-  // const [passwordIsValid, setPasswordIsValid] = useState();
-  const [formIsValid, setFormIsValid] = useState(false);
+  // const [passwordIsValid, setPasswordIsValid] = useState()
 
+  const authCtx = useContext(AuthContext)
+
+  const [formIsValid, setFormIsValid] = useState(false);
 
   const [emailState, dispatchEmail] = useReducer(emailReducer,
     { value: '', isValid: null })
@@ -51,7 +54,7 @@ const Login = (props) => {
     const timeOut = setTimeout(() => {
       console.log('checing for validity');
       setFormIsValid(
-        emailState.isValid && passwordState.isValid
+        emailIsValid && passwordIsValid
       );
     }, 500);
 
@@ -97,7 +100,7 @@ const Login = (props) => {
   const submitHandler = (event) => {
     event.preventDefault();
     // props.onLogin(enteredEmail, enteredPassword);
-    props.onLogin(emailState.value, passwordState.value);
+    authCtx.onLogin(emailState.value, passwordState.value);
   };
 
   return (
